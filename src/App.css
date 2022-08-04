@@ -1,0 +1,10 @@
+@import "~antd/dist/antd.css";
+
+.ant-table-thead tr th {
+  background-color: #b9d5f7;
+  color: #000;
+}
+
+tr:nth-child(2n) {
+  background: #e7e8e9 !important;
+}
