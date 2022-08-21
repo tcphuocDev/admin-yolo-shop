@@ -2,11 +2,6 @@ import React, { useEffect } from "react";
 import { Form, Input, Button } from "antd";
 import MainLayout from "../../containers/MainLayout";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  detailSetting,
-  updateSetting,
-} from "../../redux/actions/setting.action";
-
 const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 8 },

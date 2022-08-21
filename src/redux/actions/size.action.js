@@ -1,20 +1,19 @@
 import { notification } from 'antd';
 import {
-	confirm,
 	create,
 	detail,
 	list,
 	remove,
 	update,
-} from '../../service/coupon.service';
+} from '../../service/size.service';
 import * as types from '../constants';
 
-export const listCoupon = (query) => {
+export const listSize = (query) => {
 	return async (dispatch) => {
 		try {
 			const response = await list(query);
 			dispatch({
-				type: types.LIST_COUPON,
+				type: types.LIST_SIZE,
 				data: response.data,
 			});
 		} catch (error) {
@@ -27,7 +26,7 @@ export const listCoupon = (query) => {
 	};
 };
 
-export const createCoupon = (data, cb) => {
+export const createSize = (data, cb) => {
 	return async (dispatch) => {
 		try {
 			const response = await create(data);
@@ -54,7 +53,7 @@ export const createCoupon = (data, cb) => {
 	};
 };
 
-export const updateCoupon = (id, data, cb) => {
+export const updateSize = (id, data, cb) => {
 	return async (dispatch) => {
 		try {
 			const response = await update(id, data);
@@ -81,34 +80,7 @@ export const updateCoupon = (id, data, cb) => {
 	};
 };
 
-export const confirmCoupon = (id, cb) => {
-	return async (dispatch) => {
-		try {
-			const response = await confirm(id);
-
-			if (response.statusCode !== 200) {
-				notification.open({
-					message: 'Thất bại',
-					description: response.message,
-				});
-			} else {
-				notification.open({
-					message: 'Thành công',
-					description: response.message,
-				});
-				cb();
-			}
-		} catch (error) {
-			console.log(error?.message || error);
-			notification.open({
-				message: 'Thất bại',
-				description: error?.message || error,
-			});
-		}
-	};
-};
-
-export const deleteCoupon = (id, cb) => {
+export const deleteSize = (id, cb) => {
 	return async (dispatch) => {
 		try {
 			const response = await remove(id);
@@ -119,7 +91,7 @@ export const deleteCoupon = (id, cb) => {
 					description: response.message,
 				});
 			} else {
-				notification.open({
+				notification.success({
 					message: 'Thành công',
 					description: response.message,
 				});
@@ -135,12 +107,12 @@ export const deleteCoupon = (id, cb) => {
 	};
 };
 
-export const detailCoupon = (id) => {
+export const detailSize = (id) => {
 	return async (dispatch) => {
 		try {
 			const response = await detail(id);
 			dispatch({
-				type: types.DETAIL_COUPON,
+				type: types.DETAIL_SIZE,
 				data: response.data,
 			});
 		} catch (error) {

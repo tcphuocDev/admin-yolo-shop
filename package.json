@@ -1,5 +1,5 @@
 {
-  "name": "cms-mobile-shop",
+  "name": "cms-yolo-shop",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -10,14 +10,14 @@
     "antd": "^4.16.13",
     "axios": "^0.23.0",
     "braft-editor": "^2.3.9",
-    "chart.js": "^3.7.1",
+    "chart.js": "^3.9.1",
     "cross-env": "^7.0.3",
     "history": "^5.0.1",
     "html-react-parser": "^1.4.12",
     "moment": "^2.29.2",
     "query-string": "^7.1.1",
     "react": "^17.0.2",
-    "react-chartjs-2": "^4.1.0",
+    "react-chartjs-2": "^4.3.1",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.5",
     "react-router-dom": "^6.0.0-beta.7",
@@ -30,7 +30,7 @@
     "yarn": "^1.22.18"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "SET PORT=3031 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -52,6 +52,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {}
+  }
 }
