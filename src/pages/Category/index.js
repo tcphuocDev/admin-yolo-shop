@@ -9,6 +9,10 @@ import {
 	Input,
 	Pagination,
 	Popconfirm,
+	Row,
+	Col,
+	Select,
+	InputNumber,
 } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -18,7 +22,12 @@ import {
 	listCategory,
 	updateCategory,
 } from '../../redux/actions/category.action';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import {
+	DeleteOutlined,
+	EditOutlined,
+	MinusCircleOutlined,
+	PlusOutlined,
+} from '@ant-design/icons';
 import { formatTime } from '../../common/common';
 
 export default function Category() {
@@ -29,7 +38,6 @@ export default function Category() {
 	const [form] = Form.useForm();
 	const dispatch = useDispatch();
 	const state = useSelector((state) => state.category);
-
 	useEffect(() => {
 		dispatch(listCategory({ page }));
 	}, [dispatch, page]);
@@ -209,6 +217,61 @@ export default function Category() {
 					>
 						<Input />
 					</Form.Item>
+					{/* <Row gutter={[16, 16]}>
+						<Col span={24}>
+							<Form.Item
+								label='Danh mục con'
+								labelCol={{ span: 8 }}
+								wrapperCol={{ span: 24 }}
+								required={true}
+							>
+								<Form.List name='productVersions'>
+									{(fields, { add, remove }) => (
+										<>
+											{fields.map(({ key, name, ...restField }) => (
+												<Space
+													key={key}
+													style={{ display: 'flex', marginBottom: 8 }}
+													align='baseline'
+												>
+													<Form.Item
+														label='Tên danh mục'
+														name='name'
+														rules={[
+															{
+																required: true,
+																message: 'Vui lòng nhập tên danh mục',
+															},
+														]}
+													>
+														<Input />
+													</Form.Item>
+													<Form.Item
+														label='Mô tả'
+														name='description'
+														rules={[{ required: false }]}
+													>
+														<Input />
+													</Form.Item>
+													<MinusCircleOutlined onClick={() => remove(name)} />
+												</Space>
+											))}
+											<Form.Item>
+												<Button
+													type='dashed'
+													onClick={() => add()}
+													block
+													icon={<PlusOutlined />}
+												>
+													Thêm phiên bản
+												</Button>
+											</Form.Item>
+										</>
+									)}
+								</Form.List>
+							</Form.Item>
+						</Col>
+					</Row> */}
 
 					<Form.Item wrapperCol={{ offset: 8, span: 16 }}>
 						<Button type='primary' htmlType='submit'>

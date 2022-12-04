@@ -85,11 +85,11 @@ export default function Color() {
 	const onChange = (page) => {
 		setPage(page);
 	};
-
+	console.log(state);
 	useEffect(() => {
 		form.setFieldsValue({
-			name: state.item.name,
-			description: state.item.description,
+			name: state?.item?.name,
+			code: state?.item?.code,
 		});
 	}, [form, state.item]);
 
@@ -182,6 +182,14 @@ export default function Color() {
 						label='Tên màu sắc'
 						name='name'
 						rules={[{ required: true, message: 'Vui lòng nhập tên màu sắc' }]}
+					>
+						<Input />
+					</Form.Item>
+
+					<Form.Item
+						label='Mã màu sắc'
+						name='code'
+						rules={[{ required: true, message: 'Vui lòng mã màu sắc' }]}
 					>
 						<Input />
 					</Form.Item>
