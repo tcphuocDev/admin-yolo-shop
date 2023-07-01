@@ -268,7 +268,7 @@ export default function Coupon() {
           </Form.Item>
         </Form>
       </Modal>
-      <Table columns={columns} dataSource={state.items} pagination={false} />
+      <Table columns={columns} dataSource={state} pagination={false} />
       <Pagination
         style={{ marginTop: 10 }}
         current={page}

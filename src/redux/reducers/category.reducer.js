@@ -11,8 +11,8 @@ const categoryReducer = (state = initialState, action) => {
     case types.LIST_CATEGORY:
       return {
         ...state,
-        items: action.data.items,
-        meta: action.data.meta,
+        items: action.data,
+        meta: action.data?.meta,
       };
     case types.CREATE_CATEGORY:
     case types.DELETE_CATEGORY:

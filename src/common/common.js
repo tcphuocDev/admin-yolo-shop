@@ -12,7 +12,7 @@ export function getBase64(file) {
 }
 
 export const formatMoney = (input = 0) =>
-  input.toLocaleString("it-IT", {
+  input?.toLocaleString("it-IT", {
     style: "currency",
     currency: "VND",
   });
@@ -24,7 +24,7 @@ export const ROLE = {
 
 export const formatTitle = (title, length = 80) => {
   if (title === "undefined") return "";
-  if (title.length > length) {
+  if (title?.length > length) {
     let flag = title.trim().lastIndexOf(" ", length);
 
     const cloneTitle = title.trim().slice(0, flag !== -1 ? flag : length);

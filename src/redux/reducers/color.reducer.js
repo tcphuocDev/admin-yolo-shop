@@ -11,8 +11,8 @@ const colorReducer = (state = initialState, action) => {
     case types.LIST_COLOR:
       return {
         ...state,
-        items: action.data.items,
-        meta: action.data.meta,
+        items: action.data,
+        meta: action?.data.meta,
       };
     case types.CREATE_COLOR:
     case types.DELETE_COLOR:
