@@ -13,6 +13,7 @@ import {
   Col,
   Select,
   InputNumber,
+  Tabs,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -27,11 +28,14 @@ import {
   EditOutlined,
   MinusCircleOutlined,
   PlusOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { formatTime } from "../../common/common";
+import { isEmpty } from "lodash";
 
 export default function Category() {
   const [visible, setVisible] = useState(false);
+  const [visibleDetail, setVisibleDetail] = useState(false);
   const [page, setPage] = useState(1);
   const [mode, setMode] = useState();
   const [id, setId] = useState();
@@ -71,6 +75,13 @@ export default function Category() {
       render: (item) => {
         return (
           <>
+            <EyeOutlined
+              style={{
+                cursor: "pointer",
+                paddingRight: 10,
+              }}
+              onClick={() => showModalDetail(item.id)}
+            />
             <Popconfirm
               title="Bạn có muốn xoá bản ghi này?"
               onConfirm={() =>
@@ -110,7 +121,10 @@ export default function Category() {
     form.setFieldsValue({
       name: state.item.name,
       description: state.item.description,
-      images: state.item.logo,
+      subCategories: state?.item?.subCategories?.map((e) => ({
+        name: e?.name,
+        description: e?.description,
+      })),
     });
   }, [form, state.item]);
 
@@ -127,12 +141,21 @@ export default function Category() {
     dispatch(detailCategory(id));
   };
 
+  const showModalDetail = (id) => {
+    setId(id);
+    setMode("DETAIL");
+    setVisibleDetail(true);
+    dispatch(detailCategory(id));
+  };
+
   const showTitle = (mode) => {
     switch (mode) {
       case "CREATE":
         return "Tạo mới danh mục";
       case "UPDATE":
         return "Cập nhật danh mục";
+      case "DETAIL":
+        return "Chi tiết danh mục";
       default:
         break;
     }
@@ -151,6 +174,7 @@ export default function Category() {
 
   const handleCancel = () => {
     setVisible(false);
+    setVisibleDetail(false);
     form.resetFields();
   };
 
@@ -186,11 +210,10 @@ export default function Category() {
           Tạo mới
         </Button>
       </Space>
+      {/* Modal create / update */}
       <Modal
         title={showTitle(mode)}
-        visible={visible}
-        // onOk={handleOk}
-        // confirmLoading={confirmLoading}
+        open={visible}
         onCancel={handleCancel}
         width={1000}
         footer={false}
@@ -208,6 +231,8 @@ export default function Category() {
             <Col span={12}>
               <Form.Item
                 label="Tên danh mục"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
                 name="name"
                 rules={[
                   { required: true, message: "Vui lòng nhập tên danh mục" },
@@ -216,26 +241,29 @@ export default function Category() {
                 <Input />
               </Form.Item>
             </Col>
-            <Col span={12}>
+          </Row>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
               <Form.Item
                 label="Mô tả"
-                name="descriptin"
+                name="description"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 20 }}
                 rules={[{ required: false }]}
               >
                 <Input />
               </Form.Item>
             </Col>
           </Row>
-
           <Row gutter={[16, 16]}>
             <Col span={24}>
               <Form.Item
                 label="Danh mục con"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 24 }}
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 20 }}
                 required={true}
               >
-                <Form.List name="productVersions">
+                <Form.List name="subCategories">
                   {(fields, { add, remove }) => (
                     <>
                       {fields.map(({ key, name, ...restField }) => (
@@ -245,20 +273,20 @@ export default function Category() {
                           align="baseline"
                         >
                           <Form.Item
-                            label="Tên danh mục"
-                            name="name"
+                            label="Tên danh mục con"
+                            name={[name, "name"]}
                             rules={[
                               {
                                 required: true,
-                                message: "Vui lòng nhập tên danh mục",
+                                message: "Vui lòng nhập tên danh mục con",
                               },
                             ]}
                           >
                             <Input />
                           </Form.Item>
                           <Form.Item
-                            label="Mô tả"
-                            name="description"
+                            label="Mô tả danh mục con"
+                            name={[name, "description"]}
                             rules={[{ required: false }]}
                           >
                             <Input />
@@ -273,7 +301,7 @@ export default function Category() {
                           block
                           icon={<PlusOutlined />}
                         >
-                          Thêm phiên bản
+                          Thêm danh mục con
                         </Button>
                       </Form.Item>
                     </>
@@ -290,6 +318,87 @@ export default function Category() {
           </Form.Item>
         </Form>
       </Modal>
+
+      {/* Modal detail */}
+
+      <Modal
+        title={showTitle(mode)}
+        open={visibleDetail}
+        onCancel={handleCancel}
+        width={1000}
+        footer={false}
+      >
+        <Form
+          name="basic"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
+          form={form}
+        >
+          <Row gutter={[16, 16]}>
+            <Col span={12}>
+              <Form.Item
+                label="Tên danh mục"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                name="name"
+              >
+                {state?.item?.name}
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <Form.Item
+                label="Mô tả"
+                name="description"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 20 }}
+                rules={[{ required: false }]}
+              >
+                {state?.item?.description}
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <Form.Item
+                label="Danh mục con"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 20 }}
+              >
+                {!isEmpty(state.item.subCategories)
+                  ? state.item.subCategories.map((e) => (
+                      <Space
+                        style={{ display: "flex", marginBottom: 8 }}
+                        align="baseline"
+                      >
+                        <Form.Item label="Tên danh mục con" name="name">
+                          <Input disabled value={e?.name} />
+                        </Form.Item>
+                        <Form.Item
+                          label="Mô tả danh mục con"
+                          name="description"
+                        >
+                          <Input disabled value={e?.description} />
+                        </Form.Item>
+                      </Space>
+                    ))
+                  : []}
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit">
+              {showLableButton(mode)}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
       <Table columns={columns} dataSource={state?.items} pagination={false} />
       <Pagination
         style={{ marginTop: 10 }}

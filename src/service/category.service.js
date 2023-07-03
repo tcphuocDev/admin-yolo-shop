@@ -4,7 +4,7 @@ import { stringify } from "query-string";
 
 export const list = (query) =>
   axios.get(`${APIEnum.CATEGORY}/list/?${stringify(query)}`);
-export const create = (data) => axios.post(`${APIEnum.CATEGORY}`, data);
+export const create = (data) => axios.post(`${APIEnum.CATEGORY}/create`, data);
 export const update = (id, data) =>
   axios.put(`${APIEnum.CATEGORY}/${id}`, data);
 export const remove = (id) => axios.delete(`${APIEnum.CATEGORY}/${id}`);

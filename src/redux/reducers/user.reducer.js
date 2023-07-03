@@ -11,7 +11,7 @@ const userReducer = (state = initialState, action) => {
     case types.LIST_USER:
       return {
         ...state,
-        items: action.data.items,
+        items: action.data,
         meta: action.data.meta,
       };
     case types.UPDATE_USER:

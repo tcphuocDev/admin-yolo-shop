@@ -9,8 +9,7 @@ import { listUser, updateUser } from "../../redux/actions/user.action";
 export default function User() {
   const [page, setPage] = useState(1);
   const dispatch = useDispatch();
-  const state = useSelector((state) => state);
-
+  const state = useSelector((state) => state.user);
   useEffect(() => {
     dispatch(listUser({ page }));
   }, [dispatch, page]);
@@ -89,15 +88,11 @@ export default function User() {
   return (
     <MainLayout>
       <h2>Danh sách người dùng</h2>
-      <Table
-        columns={columns}
-        dataSource={state.user.items}
-        pagination={false}
-      />
+      <Table columns={columns} dataSource={state?.items} pagination={false} />
       <Pagination
         style={{ marginTop: 10 }}
         current={page}
-        total={state.user.meta.total}
+        total={state?.meta?.total}
         onChange={onChange}
       />
     </MainLayout>

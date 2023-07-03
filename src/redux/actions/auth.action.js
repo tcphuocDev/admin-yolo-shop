@@ -14,10 +14,14 @@ export const login = (user) => {
       } else {
         localStorage.setItem("token", response?.data?.accessToken.token);
         localStorage.setItem("refreshToken", response.data.refreshToken?.token);
+        localStorage.setItem(
+          "userInfo",
+          JSON.stringify(response.data?.userInfo)
+        );
         dispatch({
           type: types.LOGIN,
           token: response.data?.accessToken.token,
-          refreshToken: response.data.refreshToken.token,
+          refreshToken: response?.data.refreshToken.token,
         });
       }
     } catch (error) {
@@ -30,15 +34,14 @@ export const login = (user) => {
   };
 };
 
-export const getProfile = (cb) => {
+export const getProfile = () => {
   return async (dispatch) => {
     try {
       const response = await getProfileService();
       dispatch({
         type: types.GET_PROFILE,
-        user: response.data,
+        user: response?.data,
       });
-      cb();
     } catch (error) {
       dispatch({
         type: types.LOGOUT,

@@ -10,7 +10,7 @@ export const APIEnum = {
   SPECIFICATION: "/specification",
   SETTING: "/setting",
   PRODUCT: "/products",
-  USER: "/user",
+  USER: "/users",
   DASHBOARD: "/dashboard",
   ORDER: "/orders",
   SIZE: "/sizes",

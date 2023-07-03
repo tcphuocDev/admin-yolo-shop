@@ -43,6 +43,7 @@ import { listSize } from "../../redux/actions/size.action";
 import { BASE_URL, ROOT_URL } from "../../constants/config";
 import BraftEditor from "braft-editor";
 import parse from "html-react-parser";
+import { flatMap, map } from "lodash";
 
 const { Option } = Select;
 
@@ -57,6 +58,7 @@ export default function Product() {
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [subCategories, setSubCategories] = useState([]);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const state = useSelector((state) => state);
@@ -162,13 +164,16 @@ export default function Product() {
         state.product.item.description
       ),
       categoryId: state.product.item?.category?.id,
+      subCategoryId: state.product.item?.subCategory?.id,
       price: state?.product.item?.price,
-      salePrice: state?.product.item?.salePrice,
+      salePrice: state?.product.item?.salePrice || 0,
       tag: state?.product?.item?.tag,
       productVersions: state.product.item?.productVersions?.map((e) => ({
         sizeId: e.size.id,
         colorId: e.color.id,
-        quantity: e?.quantity,
+        stockQuantity: e?.stockQuantity,
+        price: e?.price,
+        salePrice: e?.salePrice,
       })),
     });
 
@@ -240,6 +245,7 @@ export default function Product() {
   };
 
   const onFinish = (values) => {
+    console.log("value", values);
     switch (mode) {
       case "CREATE":
         dispatch(
@@ -284,10 +290,22 @@ export default function Product() {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+  console.log("fileList", fileList);
 
   const handleChange = ({ fileList }) => setFileList(fileList);
 
   function onChangeCategory(value) {
+    console.log(`selected ${value}`);
+  }
+  const handleCategoryChange = (categoryId) => {
+    const categories = state.category.items || [];
+    categories.forEach((item) => {
+      if (item.id === categoryId) {
+        setSubCategories(item.subCategories);
+      }
+    });
+  };
+  function onChangeSubCategory(value) {
     console.log(`selected ${value}`);
   }
 
@@ -296,6 +314,7 @@ export default function Product() {
   }
 
   const handlePreview = async (file) => {
+    console.log("object,", file);
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
@@ -348,6 +367,7 @@ export default function Product() {
           autoComplete="off"
           form={form}
         >
+          <Row gutter={[16, 16]}></Row>
           <Row gutter={[16, 16]}>
             <Col span={12}>
               <Form.Item
@@ -359,7 +379,7 @@ export default function Product() {
                   showSearch
                   placeholder="Chọn danh mục"
                   optionFilterProp="children"
-                  onChange={onChangeCategory}
+                  onChange={handleCategoryChange}
                   onSearch={onSearch}
                   filterOption={(input, option) =>
                     option.children
@@ -369,6 +389,34 @@ export default function Product() {
                 >
                   {state.category.items?.length
                     ? state.category.items.map((item) => (
+                        <Option value={item.id}>{item.name}</Option>
+                      ))
+                    : []}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Danh mục con"
+                name="subCategoryId"
+                rules={[
+                  { required: true, message: "Vui lòng chọn danh mục con" },
+                ]}
+              >
+                <Select
+                  showSearch
+                  placeholder="Chọn danh mục con"
+                  optionFilterProp="children"
+                  onChange={onChangeSubCategory}
+                  onSearch={onSearch}
+                  filterOption={(input, option) =>
+                    option.children
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {subCategories?.length
+                    ? subCategories.map((item) => (
                         <Option value={item.id}>{item.name}</Option>
                       ))
                     : []}
@@ -410,9 +458,6 @@ export default function Product() {
                 wrapperCol={{ span: 16 }}
                 label="Giá khuyến mãi"
                 name="salePrice"
-                // rules={[
-                // 	{ required: true, message: 'Vui lòng nhập giá khuyến mãi' },
-                // ]}
               >
                 <InputNumber
                   formatter={(value) =>
@@ -443,11 +488,14 @@ export default function Product() {
                 wrapperCol={{ span: 20 }}
               >
                 <Upload
-                  action={`${BASE_URL}`}
+                  action={`${ROOT_URL}/api/v1/yolo`}
                   listType="picture-card"
                   fileList={fileList}
                   onPreview={handlePreview}
                   onChange={handleChange}
+                  beforeUpload={(file) => {
+                    return false;
+                  }}
                   preview
                 >
                   {fileList?.length >= 8 ? null : (
@@ -565,7 +613,7 @@ export default function Product() {
                           </Form.Item>
                           <Form.Item
                             label="Số lượng trong kho"
-                            name={[name, "quantity"]}
+                            name={[name, "stockQuantity"]}
                             rules={[
                               {
                                 required: true,
@@ -616,13 +664,18 @@ export default function Product() {
         <Form name="basic" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
           <Row gutter={[16, 16]}>
             <Col span={12}>
+              <Form.Item label="Tên sản phẩm" name="name">
+                {state.product.item?.name}
+              </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item label="Danh mục" name="categoryId">
                 {state.product.item?.category?.name}
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="Tên sản phẩm" name="name">
-                {state.product.item?.name}
+              <Form.Item label="Danh mục con" name="subCategoryId">
+                {state.product.item?.subCategory?.name}
               </Form.Item>
             </Col>
           </Row>
@@ -689,7 +742,7 @@ export default function Product() {
                         state?.product?.item?.price
                       )} - Giá sale: ${formatMoney(
                         state?.product?.item?.salePrice
-                      )} - SL còn: ${e?.quantity} chiếc`}
+                      )} - SL còn: ${e?.stockQuantity} chiếc`}
                     </Tabs.TabPane>
                   ))}
                 </Tabs>
